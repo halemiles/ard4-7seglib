@@ -13,7 +13,8 @@ class segment_disp
 		//// Digit functions
 		void displayDigit(int,int); // Display individual digits on a specific display
 		void displayNumber(int); // Display multiple or single numbers
-		String decodeDigit(int); // Convert digit to individual pins
+		String decodeAsString(int); // Convert digit to individual pins
+		byte decodeAsByte(int);
 		
 		//// Generic display functions
 		void clear(); // Clear display

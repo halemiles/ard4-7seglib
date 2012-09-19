@@ -15,11 +15,11 @@ segment_disp::segment_disp()
 
 void segment_disp::displayDigit(int pow, int num)
 {
-	//Get the pin layout for digit
-	String digit = decodeDigit(num);
-	
 	//Turn the digit on
 	digitalWrite(pow, HIGH);
+	
+	//Get the pin layout for digit
+	String digit = decodeAsString(num);
 	
 	//Set the segments to HIGH/LOW based on the pin setting
 	for(int i=0;i<8;i++)
@@ -70,48 +70,34 @@ void segment_disp::displayNumber(int number)
 	        displayDigit(_dPins[3],unit);
 } 
 
-String segment_disp::decodeDigit(int num)
-{	
-	String reVal;
+String segment_disp::decodeAsString(int num)
+{
+	//Pin alignment
+	// ARDUINO  1,2,3,4,5,6,7,8
+	// 7 SEG    a,b,c,d,e,f,g,.
 	
-	//Get the pin layout based on the number input
-	switch(num)
-	{
-		case 0:
-			reVal = "01111110";
-			break;
-		case 1:
-			reVal = "00110000";
-			break;
-		case 2:
-			reVal = "01101101";
-			break;
-		case 3:
-			reVal = "11111001";
-			break;
-		case 4:
-			reVal = "00110011";
-			break;
-		case 5:
-			reVal = "01011011";
-			break;
-		case 6:
-			reVal = "01011111";
-			break;
-		case 7:
-			reVal = "01110000";
-			break;
-		case 8:
-			reVal = "01111111";
-			break;
-		case 9:
-			reVal = "01111011";
-			break;
-		default:
-			reVal = "0000001";
-			break;
-	}
-	return reVal;
+	String reVal[11]={"01111110",						// 0
+					  "00110000","01101101","11111001",	// 1,2,3
+					  "00110011","01011011","01011111", // 4,5,6
+					  "01110000","01111111","01111011", // 7,8,9
+					  "0000001"};						// -
+	
+	return reVal[num];
+}
+
+byte segment_disp::decodeAsByte(int num)
+{
+	//Pin alignment
+	// M74HC595 1,2,3,4,5,6,7,8
+	// 7 SEG    .,g,f,e,d,c,b,a
+				
+	byte reVal[11]={  B10000001,						// 0
+					  B11001111,B10010010,B10000110,	// 1,2,3
+					  B11001100,B10100100,B10100000,	// 4,5,6
+					  B10001111,B10000000,B10000100,	// 7,8,9
+					  B11111110};						// -
+	
+	return reVal[num];
 }
 
 void segment_disp::clear()
