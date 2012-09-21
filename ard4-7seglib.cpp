@@ -1,16 +1,8 @@
 #include <ard4-7seglib.h>
 
-segment_disp::segment_disp()
-{
-	// Set the segment pins to 1 - 7
-	for(int i=1;i<8;i++)
-		_sPins[i-1] = i;
-		
-	// Set the display pins to 10 - 13
-	_dPins[0] = 10;
-	_dPins[1] = 11;
-	_dPins[2] = 12;
-	_dPins[3] = 13;
+segment_disp::segment_disp(boolean isShift)
+{	
+	_isShift = isShift;
 }
 
 void segment_disp::displayDigit(int pow, int num)
@@ -18,27 +10,40 @@ void segment_disp::displayDigit(int pow, int num)
 	//Turn the digit on
 	digitalWrite(pow, HIGH);
 	
-	//Get the pin layout for digit
-	String digit = decodeAsString(num);
-	
-	//Set the segments to HIGH/LOW based on the pin setting
-	for(int i=0;i<8;i++)
+	if(_isShift)
 	{
-		if(digit[i] == '1')
-		{
-		  digitalWrite(i,LOW);
-		}
-		else
-		{
-		  digitalWrite(i,HIGH);
-		}
+		// Get number as byte
+		byte digit = decodeAsByte(num);
+		
+		// Set the latch pin for current digit
+		digitalWrite(_latchPin, LOW);
+		
+		// shiftOut the data
+		shiftOut(_dataPin, _clockPin, MSBFIRST, digit); 
+		
+		// Set the latch pin for next digit
+		digitalWrite(_latchPin, HIGH);
 	}
+	else
+	{
+		//Get the pin layout for digit
+		String digit = decodeAsString(num);
 	
+		//Set the segments to HIGH/LOW based on the pin setting
+		for(int i=0;i<8;i++)
+		{
+			if(digit[i] == '1')
+			  digitalWrite(i,LOW);
+			else
+			  digitalWrite(i,HIGH);
+		}
+		//Clear the display - Only required when we arnt using shift registers
+    	clear();
+	}
 	//Turn the digit off
 	digitalWrite(pow, LOW);
 	
-	//Clear the display
-    clear();
+	
 } 
 
 void segment_disp::displayNumber(int number)
@@ -72,9 +77,6 @@ void segment_disp::displayNumber(int number)
 
 String segment_disp::decodeAsString(int num)
 {
-	//Pin alignment
-	// ARDUINO  1,2,3,4,5,6,7,8
-	// 7 SEG    a,b,c,d,e,f,g,.
 	
 	String reVal[11]={"01111110",						// 0
 					  "00110000","01101101","11111001",	// 1,2,3
@@ -87,9 +89,6 @@ String segment_disp::decodeAsString(int num)
 
 byte segment_disp::decodeAsByte(int num)
 {
-	//Pin alignment
-	// M74HC595 1,2,3,4,5,6,7,8
-	// 7 SEG    .,g,f,e,d,c,b,a
 				
 	byte reVal[11]={  B10000001,						// 0
 					  B11001111,B10010010,B10000110,	// 1,2,3
@@ -102,9 +101,9 @@ byte segment_disp::decodeAsByte(int num)
 
 void segment_disp::clear()
 {
-	for(int i=1;i<9;i++)
+	for(int i=0;i<8;i++)
 	{
-		  digitalWrite(i,HIGH);		
+		  digitalWrite(_sPins[i],LOW);		
 	}
 }
 
@@ -115,6 +114,17 @@ void segment_disp::setDigitPins(int d1, int d2, int d3, int d4)
 	_dPins[2] = d3;
 	_dPins[3] = d4;
 }
+
+void segment_disp::setRegisterPins(int latchP, int clockP, int dataP)
+{
+	//Pin connected to ST_CP of 74HC595
+	_latchPin = latchP;
+	//Pin connected to SH_CP of 74HC595
+	_clockPin = clockP;
+	////Pin connected to DS of 74HC595
+	_dataPin = dataP;
+}
+
 
 void segment_disp::setSegPins(int p1,int p2,int p3,int p4,int p5,int p6,int p7,int p8)
 {

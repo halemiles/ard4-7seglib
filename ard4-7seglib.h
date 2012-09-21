@@ -7,8 +7,9 @@
 class segment_disp
 {
 	public:
-		//// Constructors
-		segment_disp(); // Copy constructor
+		//// Constructors	
+			//For shift registers		
+		segment_disp(boolean); // Copy constructor		
 		
 		//// Digit functions
 		void displayDigit(int,int); // Display individual digits on a specific display
@@ -19,15 +20,23 @@ class segment_disp
 		//// Generic display functions
 		void clear(); // Clear display
 				
-		//// Digit pin functions
-		void setDigitPins(int,int,int,int); // Sets the digit pin layout
+		//// Pin functions
+		void setDigitPins(int,int,int,int); // Sets the digit pin layout		
+		void setSegPins(int,int,int,int,int,int,int,int); //Sets the segment pin layout
 		
-		//// Segment pin functions
-		void setSegPins(int,int,int,int,int,int,int,int);
+		//// Shift register functions
+		void setRegisterPins(int,int,int); // Sets shift register pin layout
 		
 	private:
 		int _dPins[4]; // Digit pins
 		int _sPins[8]; // Segment pins
+		boolean _isShift; // Is using shift register?
+		//Pin connected to ST_CP of 74HC595
+		int _latchPin;
+		//Pin connected to SH_CP of 74HC595
+		int _clockPin;
+		////Pin connected to DS of 74HC595
+		int _dataPin;
 };
 
 #endif
