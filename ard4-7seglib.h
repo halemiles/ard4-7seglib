@@ -13,8 +13,8 @@ class segment_disp
 		
 		//// Digit functions
 		void displayDigit(int,int); // Display individual digits on a specific display
-		void displayNumber(int); // Display multiple or single numbers
-		String decodeAsString(int); // Convert digit to individual pins
+		void displayNumber(int); // Display multiple or single numbers		
+		String decodeAsString(int); // Convert digit to individual pins		
 		byte decodeAsByte(int);
 		
 		//// Generic display functions
@@ -30,13 +30,10 @@ class segment_disp
 	private:
 		int _dPins[4]; // Digit pins
 		int _sPins[8]; // Segment pins
-		boolean _isShift; // Is using shift register?
-		//Pin connected to ST_CP of 74HC595
-		int _latchPin;
-		//Pin connected to SH_CP of 74HC595
-		int _clockPin;
-		////Pin connected to DS of 74HC595
-		int _dataPin;
+		boolean _isShift; // Is using shift register?		
+		int _latchPin; //Pin connected to ST_CP of 74HC595		
+		int _clockPin; //Pin connected to SH_CP of 74HC595		
+		int _dataPin; //Pin connected to DS of 74HC595
 };
 
 #endif

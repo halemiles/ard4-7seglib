@@ -27,12 +27,12 @@ void segment_disp::displayDigit(int pow, int num)
 	else
 	{
 		//Get the pin layout for digit
-		String digit = decodeAsString(num);
+		String digit = String(decodeAsByte(num),BIN);
 	
 		//Set the segments to HIGH/LOW based on the pin setting
 		for(int i=0;i<8;i++)
 		{
-			if(digit[i] == '1')
+			if(digit[i] == '0')
 			  digitalWrite(i,LOW);
 			else
 			  digitalWrite(i,HIGH);
@@ -76,15 +76,8 @@ void segment_disp::displayNumber(int number)
 } 
 
 String segment_disp::decodeAsString(int num)
-{
-	
-	String reVal[11]={"01111110",						// 0
-					  "00110000","01101101","11111001",	// 1,2,3
-					  "00110011","01011011","01011111", // 4,5,6
-					  "01110000","01111111","01111011", // 7,8,9
-					  "0000001"};						// -
-	
-	return reVal[num];
+{	
+	return String(decodeAsByte(num),BIN);
 }
 
 byte segment_disp::decodeAsByte(int num)
@@ -103,7 +96,7 @@ void segment_disp::clear()
 {
 	for(int i=0;i<8;i++)
 	{
-		  digitalWrite(_sPins[i],LOW);		
+		  digitalWrite(_sPins[i],HIGH);		
 	}
 }
 
